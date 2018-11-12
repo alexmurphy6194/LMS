@@ -1,9 +1,11 @@
 # The Tech Academy - Learning Management System
 
 ## Introduction
-   Spent two weeks building out a new feature for The Tech Academy's development team to implement in the school’s learning management system. The project entailed creating a user interface for students and admin in the Job Placement course. The interface allows students to log information, see aggregate statistics for the student body and allows the Job Placement Director to track student progress, reach out to students, and post information to a bulletin. During my time on the project, I worked on a variety of different features of the website involving both frontend and backend tasks. It was my first time taking on a legacy code base, which taught me how to learn new systems quickly. I used my skills in C#, HTML/CSS, Javascript and SQL to move the code-base forward with cleaner more performant solutions.
+   This past October, I spent two weeks as an intern for The Tech Academy's development team, building out a new feature to be implemented in the school’s learning management system. The project entailed creating a user interface for students and admin in the Job Placement course. The interface allows students to log information, see aggregate statistics for the student body and allows the Job Placement Director to track student progress, reach out to students, and post information to a bulletin. During my time on the project, I worked on a variety of different features of the website involving both frontend and backend tasks. It was my first time taking on a legacy code base, which taught me how to learn new systems quickly. I used my skills in C#, HTML/CSS, Javascript, and SQL to move the code-base forward with cleaner more performant solutions.
 
 Below are a selection of stories I worked on, along with code snippets. 
+
+Also 'JP' is used in short for Job Placement in naming conventions throughout.
 
 ## Back End Stories
 * [Notify Director if Hired or Graduated](#Notify-Director-if-Hired-or-Graduated)
@@ -14,7 +16,7 @@ Below are a selection of stories I worked on, along with code snippets.
 * [Added Seed Data for the OutsideNetworkings table](#Added-Seed-Data-for-the-OutsideNetworkings-table)
 
 ### Notify Director if Hired or Graduated
-   The Students in the Job Placement Program submit a record of any time they submit a job application, and eventually if they got a job offer. I added functionality to the JPHires controller, where they create the record of the job offer, so that any time a user logged one, an entry of that student would be submitted to the JPNotifications table, which would ultimately go on to alert the head of Job Placement. 
+   The Students in the Job Placement Program make a record of any time they submit a job application, and eventually if they got a job offer. I added functionality to the JPHires controller which handles the creation of the job offer record, so that if a student logged one, an entry of that student would be submitted to the JPNotifications table, and would ultimately go on to alert the head of Job Placement. 
      
 ```
 // Grabs the active users ID and uses it to identify the users row in JPStudents table to edit JPGraduated and JPHired from false to true.
@@ -34,7 +36,7 @@ Below are a selection of stories I worked on, along with code snippets.
                 db.JPNotifications.Add(jPNotification);
                 db.SaveChanges();
 ```
-   Also added functionality to the application create page, where the students record all the job applications they submit. I added a check to the Applications database table for how many the student has submitted, and if it is the students' 35th application, it marks them as “ready to graduate” by changing the student object's boolean 'Graduate' property to true. The controller then gets the student's object and submits it to the JPNotifications table for the Job Placement Director to be notified. 
+   Additionally I added functionality to the controller handling student job applications, which would check the database for the total number they have submitted, and if it is the student's 35th application, it marks them “ready to graduate” by setting the student object's 'Graduate' property to true. The controller then submits their 'jpStudent' object and the time the application was logged to the JPNotifications table for the Job Placement Director to be notified. 
 ```
 var applications = from s in db.JPApplications.Where(x => x.ApplicationUserId == userID)
                                    select s;
@@ -93,7 +95,7 @@ var applications = from s in db.JPApplications.Where(x => x.ApplicationUserId ==
 }
 ```
 ### Created an Export Email button for New Students in Job Placement
-   The director of Job Placement has access to a page that displays New Students to the program as well as those hired in the past week. I added the button to export the emails of the New Students so the director can reach out to them. This required checking when the student entered the Job Placement program, and if it was within 7 days of datetime.Now, pull their information from the database, append that info to a stringBuilder object, and then download it as an excel spreadsheet. In order to reduce redundancy, I combined the methods for the two exportCSV buttons on the page. I used a nullable bool that is passed from the View based on which button is clicked as a conditional for which email list needed to be created.
+   The director of Job Placement has access to a page that displays New Students to the program as well as those hired in the past week. I added the button to export the emails of the New Students so the director can reach out to them. This required checking when the student entered the Job Placement program, and if it was within 7 days of 'datetime.Now', pull their information from the database, append that info to a stringBuilder object, and then download it as an excel spreadsheet. In order to reduce redundancy, I combined the methods for the two exportCSV buttons on the page. I used a nullable bool that is passed from the View based on which button is clicked as a conditional for which email list needed to be created.
 ```
 // CSV Export Option
         
@@ -153,7 +155,7 @@ var applications = from s in db.JPApplications.Where(x => x.ApplicationUserId ==
         }
 ```
 ### Fixed null ApplicationID bug
-   Originally the save changes button on the Edit view of the JPChecklist view redirected student back to Index page, but now Index is Admin only. Instead the student had to be redirected to the StudentIndex view. However because the student's ApplicationID was never actually used on the Edit view, it would come back as null to the Controller even though it was a part of the  view's model. When the student was redirected back to the StudentIndex page it no longer had the user's ID and no longer displayed their checklist or allowed for changes. In order to correct this I had to use a Html.HiddenFor(model => model.ApplicationUserId) on the Edit view so that it would bind to the JPChecklist edit method in the Controller, and then render the correct view. It now operates functionally, allow student to save changes and being redirected to proper page with changes showing. 
+   In the JPChecklist 'Edit' view, the student can save changes to their progress checklist for the Jop Placement Program. They are then redirected to the StudentIndex view. We were running into an issue where the students ApplicationUserID, which is how we identify them and get the correct data to display, was not being passed from the Edit view back to the StudentIndex. I came to learn that although the model on the Edit view contained the ApplicationUserID, since it was never used on the view explicitly, it would come back as null to the Controller and the StudentIndex view would render incomplete, no longer displaying the relevant student's information. In order to correct this, I had to use a 'Html.HiddenFor(model => model.ApplicationUserId)' on the Edit view so that it would bind to the JPChecklist Edit method in the Controller, and then be passed properly to the StudentIndex view. It now operates functionally, allow students to save changes and redirects them to the page with changes showing. 
 ```
 <h4>JPChecklist</h4>
     <hr />
@@ -162,11 +164,11 @@ var applications = from s in db.JPApplications.Where(x => x.ApplicationUserId ==
     @Html.HiddenFor(model => model.ApplicationUserid)
 ```
 ### Rendered OutsideNetworkings Partial View on Networking View
-   The outside Networkings view displays contact info of people outside the Tech Academy, 
-that Students in Job Placement will have the ability to contact. We wanted to combine this
-information in the same view as the original Networking view, which uses a ViewModel to get the
-relevant data. However, the outsideNetworkings view needed only its model, so this called for the use
-of a partial view to keep the data access simplified and relevant.
+   The outside Networkings view displays contact info of people outside the Tech Academy 
+that Students in Job Placement have the ability to contact. We wanted to combine this
+information in the same view as the original Networking view, which displays the info of people within the school,
+past graduates etc. The Networkings view, however, gets it data via a ViewModel, and the outsideNetworkings view needed a completely
+different model, so I used a partial view to keep the data access simplified and relevant.
 ```
 <br />
 @Html.Action("_OutsideNetworking","JPOutsideNetworkings",null)
@@ -181,9 +183,9 @@ of a partial view to keep the data access simplified and relevant.
         }
 ```
 ### Added Seed Data for the OutsideNetworkings table
-   To test the functionality of the controller and view, I created test seed data to populate
+   To test the functionality of the OutsideNetworkings controller and view, I created test seed data to populate
 the OutsideNetworkings table upon start of the application. I pushed a migration to update the solution
-and allow the team to access the information.
+and allow the team to access the new information.
 ```
 var outsideNetworkings = new List<JPOutsideNetworking>
             {
@@ -205,7 +207,7 @@ var outsideNetworkings = new List<JPOutsideNetworking>
 
 
 ### Remove Duplicates from MeetupAPI
-   One of the features available to Job Placement students, was a page that displayed a list of current and upcoming
+   One of the features available to Job Placement students was a page that displayed a list of current and upcoming
 Meetup Group Events. In the interest of efficiency and readability we opted to remove duplicate events,
 i.e. events that occurred regularly and were displayed more than once on the list. I used a filter call on the array
 containing the meetup event objects, found the events where the names were duplicates, and created a new
@@ -223,12 +225,12 @@ function filterLatestMeetUpWithSameName(arr) {
 ### Updates notification for the Admin display
    I created a notification visual that would be displayed only to the Job Placement director
 notifying them of the number of students that got job offers or submitted the required 35 applications
-and are ready to Graduate. This was tricky because where the notification is being displayed in the Nav Bar
-is being rendered in the Layout view. Every solution that involved passing data model to the Layout that I found
-was overly complicated and messy. I managed a clever work-around by adding a method in the Startup.cs, 
-which gets called every time the application is started. This meant I could get the data automatically 
-at the beginning of the site load, call the method from the Layout view which would return the number of students 
-in the Notifications table, and then display it however I needed. It required combination of 
+and are ready to Graduate. This was tricky because where the notification is being displayed in the Nav Bar,
+is being rendered in the Layout view. Every solution that involved passing a data model to the Layout seemed overly 
+complicated and messy. I managed a clever work-around by adding a method in the Startup.cs, 
+which gets called every time the application is started. This method would pull the relevant data automatically 
+at the beginning of the site load, I then call the method from the Layout view which would return the number of students 
+in the Notifications table, and then I could display it however I needed. It required combination of 
 backend database access and logic, getting that info to the correct controller and calling it, 
 and then displaying it back on the front end. It encompassed all aspects of MVC and took a bit of trickery
 to be able to get it to work. The idea to get the data in startup was kind of on a whim,
@@ -274,7 +276,7 @@ specific view's content.
 ```
 ### Add link, image, and local image path buttons to text editor
    On the Create Bulletin view there is a text editor for the director of Job Placement create 
-and post bulletins for the students. I added three buttons, two that would prompt for a URL/File path
+and post bulletins for students to see. I added three buttons, two that would prompt for a URL/File path
 and then wrap the URL in appropriate hyperlink tag, and one that would open a file explorer and 
 let the user pick the file, and again wrap it in correct markup to be displayed. 
 ```
