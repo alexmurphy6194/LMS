@@ -10,7 +10,7 @@ Below are a selection of stories I worked on, along with code snippets.
 * [Create Admin Role and Authorize Access to certain pages](#Create-Admin-Role-and-Authorize-Access-to-certain-pages)
 * [Created an Export Email button for New Students in Job Placement](#Created-an-Export-Email-button-for-New-Students-in-Job-Placement)
 * [Fixed null ApplicationID bug](#Fixed-null-ApplicationID-bug)
-* [Rendered _OutsideNetworkings Partial View on Networking View](#Rendered-_OutsideNetworkings-Partial-View-on-Networking-View)
+* [Rendered OutsideNetworkings Partial View on Networking View](#Rendered-OutsideNetworkings-Partial-View-on-Networking-View)
 * [Added Seed Data for the OutsideNetworkings table](#Added-Seed-Data-for-the-OutsideNetworkings-table)
 
 ### Notify Director if Hired or Graduated
@@ -161,16 +161,17 @@ var applications = from s in db.JPApplications.Where(x => x.ApplicationUserId ==
     @Html.HiddenFor(model => model.JPChecklistid)
     @Html.HiddenFor(model => model.ApplicationUserid)
 ```
-### Rendered _OutsideNetworkings Partial View on Networking View
-	The outside Networkings view displays contact info of people outside the Tech Academy, 
-	that Students in Job Placement will have the ability to contact. We wanted to combine this
-	information in the same view as the original Networking view, which uses a ViewModel to get the
-	relevant data. However, the outsideNetworkings view needed only its model, so this called for the use
-	of a partial view to keep the data access simplified and relevant.
+### Rendered OutsideNetworkings Partial View on Networking View
+   The outside Networkings view displays contact info of people outside the Tech Academy, 
+that Students in Job Placement will have the ability to contact. We wanted to combine this
+information in the same view as the original Networking view, which uses a ViewModel to get the
+relevant data. However, the outsideNetworkings view needed only its model, so this called for the use
+of a partial view to keep the data access simplified and relevant.
 ```
 <br />
 @Html.Action("_OutsideNetworking","JPOutsideNetworkings",null)
 <br />
+```
 ```
  public ActionResult _OutsideNetworking()
         {
@@ -180,9 +181,9 @@ var applications = from s in db.JPApplications.Where(x => x.ApplicationUserId ==
         }
 ```
 ### Added Seed Data for the OutsideNetworkings table
-	To test the functionality of the controller and view, I created test seed data to populate
-	the OutsideNetworkings table upon start of the application. I pushed a migration to update the solution
-	and allow the team to access the information.
+   To test the functionality of the controller and view, I created test seed data to populate
+the OutsideNetworkings table upon start of the application. I pushed a migration to update the solution
+and allow the team to access the information.
 ```
 var outsideNetworkings = new List<JPOutsideNetworking>
             {
@@ -204,11 +205,11 @@ var outsideNetworkings = new List<JPOutsideNetworking>
 
 
 ### Remove Duplicates from MeetupAPI
-    One of the features available to Job Placement students, was a page that displayed a list of current and upcoming
-	Meetup Group Events. In the interest of efficiency and readability we opted to remove duplicate events,
-	i.e. events that occurred regularly and were displayed more than once on the list. I used a filter call on the array
-	containing the meetup event objects, found the events where the names were duplicates, and created a new
-	array that contained only one instance of the event.
+   One of the features available to Job Placement students, was a page that displayed a list of current and upcoming
+Meetup Group Events. In the interest of efficiency and readability we opted to remove duplicate events,
+i.e. events that occurred regularly and were displayed more than once on the list. I used a filter call on the array
+containing the meetup event objects, found the events where the names were duplicates, and created a new
+array that contained only one instance of the event.
 ```
 function filterLatestMeetUpWithSameName(arr) {
             
@@ -220,7 +221,7 @@ function filterLatestMeetUpWithSameName(arr) {
             return newArr;
 ```
 ### Updates notification for the Admin display
-	I created a notification visual that would be displayed only to the Job Placement director
+   I created a notification visual that would be displayed only to the Job Placement director
 notifying them of the number of students that got job offers or submitted the required 35 applications
 and are ready to Graduate. This was tricky because where the notification is being displayed in the Nav Bar
 is being rendered in the Layout view. Every solution that involved passing data model to the Layout that I found
@@ -259,10 +260,10 @@ public partial class Startup
                                 }
 ```
 ### Page Title beneath NavBar bug
-    Fixed an issue with the layout where the title of each page would fall behind the navbar.
-	Found an interesting solution where I wrapped the RenderBody action in a div, and gave it a padding-top of 80.
-	By doing this, every view would load the Layout and then have proper spacing from the top before loading that
-	specific view's content.
+   Fixed an issue with the layout where the title of each page would fall behind the navbar.
+Found an interesting solution where I wrapped the RenderBody action in a div, and gave it a padding-top of 80.
+By doing this, every view would load the Layout and then have proper spacing from the top before loading that
+specific view's content.
 	
 ```
  </header>
@@ -272,10 +273,10 @@ public partial class Startup
     <footer class="footer">
 ```
 ### Add link, image, and local image path buttons to text editor
-	On the Create Bulletin view there is a text editor for the director of Job Placement create 
-	and post bulletins for the students. I added three buttons, two that would prompt for a URL/File path
-	and then wrap the URL in appropriate hyperlink tag, and one that would open a file explorer and 
-	let the user pick the file, and again wrap it in correct markup to be displayed. 
+   On the Create Bulletin view there is a text editor for the director of Job Placement create 
+and post bulletins for the students. I added three buttons, two that would prompt for a URL/File path
+and then wrap the URL in appropriate hyperlink tag, and one that would open a file explorer and 
+let the user pick the file, and again wrap it in correct markup to be displayed. 
 ```
 	//Custom image upload button
         document.getElementById('addImage').onclick = function () {
@@ -290,9 +291,9 @@ public partial class Startup
         });
 ```
 ### Adjusted styling of Snapshot View
-	The tables on the Snapshot view were not aligned horizontally so I added custom css
-	using margins and 'table-layout: fixed' to get them displaying properly. The 'Export Student Email Addresses'
-	button was also too close to the footer, so in the  Razr HTML.actionLink I gave it a custom ID and added margin-bottom.
+   The tables on the Snapshot view were not aligned horizontally so I added custom css
+using margins and 'table-layout: fixed' to get them displaying properly. The 'Export Student Email Addresses'
+button was also too close to the footer, so in the  Razr HTML.actionLink I gave it a custom ID and added margin-bottom.
 ```
 /*Re-styling Snapshot Viewmodel*/
 #tablestuff{
@@ -322,7 +323,7 @@ public partial class Startup
 </table>
 ```
 ### Other Skills Learned
-	In addition to these specific technologies, the project overal was a great foundation for working in a team environment.
+   In addition to these specific technologies, the project overal was a great foundation for working in a team environment.
 There were numerous times where I or other group members would run into a wall, and we would talk the code through and 
 work out solutions together. This environment was also an opportunity to practice effective communication and conflict
 resolution. I learned how to talk about bugs in the other developer's code, listen to critique on my own, and divy up tasks on stories 
